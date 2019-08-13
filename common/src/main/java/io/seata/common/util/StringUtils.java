@@ -38,6 +38,11 @@ public class StringUtils {
     }
 
     /**
+     * empty string
+     */
+    public static final String EMPTY = "";
+    
+    /**
      * Is empty boolean.
      *
      * @param str the str
@@ -205,6 +210,7 @@ public class StringUtils {
                 sb.deleteCharAt(sb.length() - 1);
             }
             sb.append("}");
+            return sb.toString();
         }
         StringBuilder sb = new StringBuilder();
         Field[] fields = obj.getClass().getDeclaredFields();

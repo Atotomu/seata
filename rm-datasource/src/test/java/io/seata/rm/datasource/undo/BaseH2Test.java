@@ -22,6 +22,7 @@ import io.seata.rm.datasource.sql.struct.Row;
 import io.seata.rm.datasource.sql.struct.TableMeta;
 import io.seata.rm.datasource.sql.struct.TableRecords;
 import org.apache.commons.dbcp.BasicDataSource;
+import org.h2.store.fs.FileUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,6 +33,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
+
 
 /**
  * @author Geng Zhang
@@ -71,11 +73,13 @@ public abstract class BaseH2Test {
             } catch (SQLException e) {
             }
         }
+
+        FileUtils.deleteRecursive("db_store", true);
     }
 
     @BeforeEach
     private void prepareTable() {
-        execSQL("DROP TABLE table_name");
+        execSQL("DROP TABLE IF EXISTS table_name");
         execSQL("CREATE TABLE table_name ( `id` int(8), `name` varchar(64), PRIMARY KEY (`id`))");
     }
 
