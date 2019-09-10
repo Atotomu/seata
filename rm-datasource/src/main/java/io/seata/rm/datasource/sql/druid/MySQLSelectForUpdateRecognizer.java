@@ -61,14 +61,14 @@ public class MySQLSelectForUpdateRecognizer extends BaseRecognizer implements SQ
     }
 
     @Override
-    public String getWhereCondition(final ParametersHolder parametersHolder, final ArrayList<List<Object>> paramAppenders) {
+    public String getWhereCondition(final ParametersHolder parametersHolder, final ArrayList<List<Object>> paramAppenderList) {
         SQLSelectQueryBlock selectQueryBlock = getSelect();
         SQLExpr where = selectQueryBlock.getWhere();
         if (where == null) {
             return "";
         }
-        StringBuffer sb = new StringBuffer();
-        MySqlOutputVisitor visitor = super.createMySqlOutputVisitor(parametersHolder, paramAppenders, sb);
+        StringBuilder sb = new StringBuilder();
+        MySqlOutputVisitor visitor = super.createMySqlOutputVisitor(parametersHolder, paramAppenderList, sb);
         if (where instanceof SQLBinaryOpExpr) {
             visitor.visit((SQLBinaryOpExpr) where);
         } else if (where instanceof SQLInListExpr) {
@@ -88,7 +88,7 @@ public class MySQLSelectForUpdateRecognizer extends BaseRecognizer implements SQ
         if (where == null) {
             return "";
         }
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         MySqlOutputVisitor visitor = new MySqlOutputVisitor(sb);
         visitor.visit((SQLBinaryOpExpr) where);
         return sb.toString();
@@ -117,7 +117,7 @@ public class MySQLSelectForUpdateRecognizer extends BaseRecognizer implements SQ
     public String getTableName() {
         SQLSelectQueryBlock selectQueryBlock = getSelect();
         SQLTableSource tableSource = selectQueryBlock.getFrom();
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         MySqlOutputVisitor visitor = new MySqlOutputVisitor(sb) {
 
             @Override

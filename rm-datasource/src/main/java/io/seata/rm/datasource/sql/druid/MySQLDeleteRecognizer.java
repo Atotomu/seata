@@ -63,7 +63,7 @@ public class MySQLDeleteRecognizer extends BaseRecognizer implements SQLDeleteRe
 
     @Override
     public String getTableName() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         MySqlOutputVisitor visitor = new MySqlOutputVisitor(sb) {
 
             @Override
@@ -77,13 +77,13 @@ public class MySQLDeleteRecognizer extends BaseRecognizer implements SQLDeleteRe
     }
 
     @Override
-    public String getWhereCondition(final ParametersHolder parametersHolder, final ArrayList<List<Object>> paramAppenders) {
+    public String getWhereCondition(final ParametersHolder parametersHolder, final ArrayList<List<Object>> paramAppenderList) {
         SQLExpr where = ast.getWhere();
         if (where == null) {
             return "";
         }
-        StringBuffer sb = new StringBuffer();
-        MySqlOutputVisitor visitor = super.createMySqlOutputVisitor(parametersHolder, paramAppenders, sb);
+        StringBuilder sb = new StringBuilder();
+        MySqlOutputVisitor visitor = super.createMySqlOutputVisitor(parametersHolder, paramAppenderList, sb);
         if (where instanceof SQLBinaryOpExpr) {
             visitor.visit((SQLBinaryOpExpr) where);
         } else if (where instanceof SQLInListExpr) {
@@ -102,7 +102,7 @@ public class MySQLDeleteRecognizer extends BaseRecognizer implements SQLDeleteRe
         if (where == null) {
             return "";
         }
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         MySqlOutputVisitor visitor = new MySqlOutputVisitor(sb);
         visitor.visit((SQLBinaryOpExpr) where);
         return sb.toString();

@@ -26,7 +26,6 @@ import com.alibaba.druid.sql.ast.expr.SQLInListExpr;
 import com.alibaba.druid.sql.ast.expr.SQLBetweenExpr;
 import com.alibaba.druid.sql.ast.statement.SQLExprTableSource;
 import com.alibaba.druid.sql.ast.statement.SQLUpdateSetItem;
-import com.alibaba.druid.sql.dialect.mysql.visitor.MySqlOutputVisitor;
 import com.alibaba.druid.sql.dialect.oracle.ast.stmt.OracleUpdateStatement;
 import com.alibaba.druid.sql.dialect.oracle.visitor.OracleOutputVisitor;
 import io.seata.rm.datasource.ParametersHolder;
@@ -103,13 +102,13 @@ public class OracleUpdateRecognizer extends BaseRecognizer implements SQLUpdateR
     }
 
     @Override
-    public String getWhereCondition(final ParametersHolder parametersHolder, final ArrayList<List<Object>> paramAppender) {
+    public String getWhereCondition(final ParametersHolder parametersHolder, final ArrayList<List<Object>> paramAppenderList) {
         SQLExpr where = ast.getWhere();
         if (where == null) {
             return "";
         }
-        StringBuffer sb = new StringBuffer();
-        MySqlOutputVisitor visitor = super.createMySqlOutputVisitor(parametersHolder, paramAppender, sb);
+        StringBuilder sb = new StringBuilder();
+        OracleOutputVisitor visitor = super.createOracleOutputVisitor(parametersHolder, paramAppenderList, sb);
         visitor.visit((SQLBinaryOpExpr) where);
         return sb.toString();
     }
@@ -121,9 +120,8 @@ public class OracleUpdateRecognizer extends BaseRecognizer implements SQLUpdateR
             return "";
         }
 
-
-        StringBuffer sb = new StringBuffer();
-        MySqlOutputVisitor visitor = new MySqlOutputVisitor(sb);
+        StringBuilder sb = new StringBuilder();
+        OracleOutputVisitor visitor = new OracleOutputVisitor(sb);
 
         if (where instanceof SQLBetweenExpr) {
             visitor.visit((SQLBetweenExpr) where);
@@ -143,7 +141,7 @@ public class OracleUpdateRecognizer extends BaseRecognizer implements SQLUpdateR
 
     @Override
     public String getTableName() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         OracleOutputVisitor visitor = new OracleOutputVisitor(sb) {
 
             @Override
