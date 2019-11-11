@@ -47,6 +47,9 @@ public class DefaultLockManager extends AbstractLockManager {
 
     @Override
     public boolean acquireLock(BranchSession branchSession) throws TransactionException {
+        if (branchSession == null) {
+            throw new IllegalArgumentException("branchSession can't be null for memory/file locker.");
+        }
         String lockKey = branchSession.getLockKey();
         if (StringUtils.isNullOrEmpty(lockKey)) {
             //no lock
@@ -63,11 +66,14 @@ public class DefaultLockManager extends AbstractLockManager {
 
     @Override
     public boolean releaseLock(BranchSession branchSession) throws TransactionException {
+        if (branchSession == null) {
+            throw new IllegalArgumentException("branchSession can't be null for memory/file locker.");
+        }
         List<RowLock> locks = collectRowLocks(branchSession);
         try {
-            return this.doReleaseLock(locks, branchSession);
+            return getLocker(branchSession).releaseLock(locks);
         } catch (Exception t) {
-            LOGGER.error("unLock error, branchSession:" + branchSession, t);
+            LOGGER.error("unLock error, branchSession:{}",branchSession, t);
             return false;
         }
     }
@@ -82,7 +88,7 @@ public class DefaultLockManager extends AbstractLockManager {
                 locks.addAll(collectRowLocks(branchSession));
             }
             try {
-                return this.doReleaseLock(locks, null);
+                return getLocker(null).releaseLock(locks);
             } catch (Exception t) {
                 LOGGER.error("unLock globalSession error, xid:{}", globalSession.getXid(), t);
                 return false;
@@ -98,21 +104,13 @@ public class DefaultLockManager extends AbstractLockManager {
         }
     }
 
-    private boolean doReleaseLock(List<RowLock> locks, BranchSession branchSession) {
-        if (CollectionUtils.isEmpty(locks)) {
-            //no lock
-            return true;
-        }
-        return getLocker(branchSession).releaseLock(locks);
-    }
-
     @Override
     public boolean isLockable(String xid, String resourceId, String lockKey) throws TransactionException {
         List<RowLock> locks = collectRowLocks(lockKey, resourceId, xid);
         try {
             return getLocker().isLockable(locks);
         } catch (Exception t) {
-            LOGGER.error("isLockable error, xid:" + xid + ", resourceId:" + resourceId + ", lockKey:" + lockKey, t);
+            LOGGER.error("isLockable error, xid:{} resourceId:{}, lockKey:{}", xid,resourceId,lockKey,t);
             return false;
         }
     }

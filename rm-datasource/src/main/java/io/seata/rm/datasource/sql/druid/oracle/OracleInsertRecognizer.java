@@ -43,7 +43,7 @@ import java.util.List;
  * @author ccg
  * @date 2019/3/25
  */
-public class OracleInsertRecognizer extends BaseRecognizer implements SQLInsertRecognizer {
+public class OracleInsertRecognizer extends BaseOracleRecognizer implements SQLInsertRecognizer {
 
     private final OracleInsertStatement ast;
 
@@ -93,7 +93,7 @@ public class OracleInsertRecognizer extends BaseRecognizer implements SQLInsertR
         List<String> list = new ArrayList<>(columnSQLExprs.size());
         for (SQLExpr expr : columnSQLExprs) {
             if (expr instanceof SQLIdentifierExpr) {
-                list.add(((SQLIdentifierExpr)expr).getName().toUpperCase());
+                list.add(((SQLIdentifierExpr)expr).getName());
             } else {
                 throw new SQLParsingException("Unknown SQLExpr: " + expr.getClass() + " " + expr);
             }
