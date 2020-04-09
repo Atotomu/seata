@@ -22,7 +22,6 @@ import static io.seata.spring.boot.autoconfigure.StarterConstants.REGISTRY_NACOS
 
 /**
  * @author xingfudeshi@gmail.com
- * @date 2019/10/03
  */
 @Component
 @ConfigurationProperties(prefix = REGISTRY_NACOS_PREFIX)
@@ -30,6 +29,8 @@ public class RegistryNacosProperties {
     private String serverAddr = "localhost";
     private String namespace = "";
     private String cluster = "default";
+    private String username = "";
+    private String password = "";
 
     public String getServerAddr() {
         return serverAddr;
@@ -55,6 +56,23 @@ public class RegistryNacosProperties {
 
     public RegistryNacosProperties setCluster(String cluster) {
         this.cluster = cluster;
+        return this;
+    }
+    public String getUsername() {
+        return username;
+    }
+
+    public RegistryNacosProperties setUsername(String username) {
+        this.username = username;
+        return this;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public RegistryNacosProperties setPassword(String password) {
+        this.password = password;
         return this;
     }
 }

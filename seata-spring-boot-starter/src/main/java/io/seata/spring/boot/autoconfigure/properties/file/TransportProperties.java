@@ -18,11 +18,12 @@ package io.seata.spring.boot.autoconfigure.properties.file;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import static io.seata.core.constants.DefaultValues.DEFAULT_ENABLE_CLIENT_BATCH_SEND_REQUEST;
+import static io.seata.core.constants.DefaultValues.DEFAULT_TRANSPORT_HEARTBEAT;
 import static io.seata.spring.boot.autoconfigure.StarterConstants.TRANSPORT_PREFIX;
 
 /**
  * @author xingfudeshi@gmail.com
- * @date 2019/09/30
  */
 @Component
 @ConfigurationProperties(prefix = TRANSPORT_PREFIX)
@@ -38,7 +39,7 @@ public class TransportProperties {
     /**
      * enable heartbeat
      */
-    private boolean heartbeat = true;
+    private boolean heartbeat = DEFAULT_TRANSPORT_HEARTBEAT;
     /**
      * serialization
      */
@@ -47,6 +48,11 @@ public class TransportProperties {
      * compressor
      */
     private String compressor = "none";
+
+    /**
+     * enable client batch send request
+     */
+    private boolean enableClientBatchSendRequest = DEFAULT_ENABLE_CLIENT_BATCH_SEND_REQUEST;
 
     public String getType() {
         return type;
@@ -93,4 +99,12 @@ public class TransportProperties {
         return this;
     }
 
+    public boolean isEnableClientBatchSendRequest() {
+        return enableClientBatchSendRequest;
+    }
+
+    public TransportProperties setEnableClientBatchSendRequest(boolean enableClientBatchSendRequest) {
+        this.enableClientBatchSendRequest = enableClientBatchSendRequest;
+        return this;
+    }
 }

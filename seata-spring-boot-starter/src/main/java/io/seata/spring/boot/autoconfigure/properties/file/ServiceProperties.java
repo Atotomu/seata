@@ -15,26 +15,33 @@
  */
 package io.seata.spring.boot.autoconfigure.properties.file;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import static io.seata.core.constants.DefaultValues.DEFAULT_DISABLE_GLOBAL_TRANSACTION;
+import static io.seata.core.constants.DefaultValues.DEFAULT_GROUPLIST;
+import static io.seata.core.constants.DefaultValues.DEFAULT_TC_CLUSTER;
+import static io.seata.core.constants.DefaultValues.DEFAULT_TX_GROUP;
 import static io.seata.spring.boot.autoconfigure.StarterConstants.SERVICE_PREFIX;
 
 /**
  * @author xingfudeshi@gmail.com
- * @date 2019/09/30
  */
 @Component
 @ConfigurationProperties(prefix = SERVICE_PREFIX)
-public class ServiceProperties {
+public class ServiceProperties implements InitializingBean {
     /**
      * vgroup->rgroup
      */
-    private String vgroupMapping = "default";
+    private Map<String, String> vgroupMapping = new HashMap<>();
     /**
-     * only support single node
+     * group list
      */
-    private String grouplist = "127.0.0.1:8091";
+    private Map<String, String> grouplist = new HashMap<>();
     /**
      * degrade current not support
      */
@@ -42,24 +49,22 @@ public class ServiceProperties {
     /**
      * disable globalTransaction
      */
-    private boolean disableGlobalTransaction = false;
+    private boolean disableGlobalTransaction = DEFAULT_DISABLE_GLOBAL_TRANSACTION;
 
-    public String getVgroupMapping() {
+    public Map<String, String> getVgroupMapping() {
         return vgroupMapping;
     }
 
-    public ServiceProperties setVgroupMapping(String vgroupMapping) {
+    public void setVgroupMapping(Map<String, String> vgroupMapping) {
         this.vgroupMapping = vgroupMapping;
-        return this;
     }
 
-    public String getGrouplist() {
+    public Map<String, String> getGrouplist() {
         return grouplist;
     }
 
-    public ServiceProperties setGrouplist(String grouplist) {
+    public void setGrouplist(Map<String, String> grouplist) {
         this.grouplist = grouplist;
-        return this;
     }
 
     public boolean isEnableDegrade() {
@@ -78,5 +83,15 @@ public class ServiceProperties {
     public ServiceProperties setDisableGlobalTransaction(boolean disableGlobalTransaction) {
         this.disableGlobalTransaction = disableGlobalTransaction;
         return this;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        if (0 == vgroupMapping.size()) {
+            vgroupMapping.put(DEFAULT_TX_GROUP, DEFAULT_TC_CLUSTER);
+        }
+        if (0 == grouplist.size()) {
+            grouplist.put(DEFAULT_TC_CLUSTER, DEFAULT_GROUPLIST);
+        }
     }
 }
